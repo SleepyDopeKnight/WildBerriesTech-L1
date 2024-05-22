@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 	"math/rand"
 	"os"
 	"os/signal"
@@ -12,21 +11,34 @@ import (
 )
 
 func main() {
-	stopSignal, cancel := context.WithCancel(context.Background()) // создает контекст, с помощью которого можно выйти из программы
-	defer cancel()                                                 // для отмены созданого контекста
-	gracefulShutdown(cancel)                                       // выход из программы на ctlc+c
-	fmt.Println("Count of workers:")
 	var workers int
-	var wg sync.WaitGroup
+
+	stopSignal, cancel := context.WithCancel(context.Background()) // создает контекст, с помощью которого можно выйти из программы
+	gracefulShutdown(cancel)                                       // выход из программы на ctlc+c
+
+	defer cancel() // для отмены созданого контекста
+	fmt.Println("Count of workers:")
+
 	if _, err := fmt.Fscan(os.Stdin, &workers); err != nil || workers <= 0 {
-		log.Fatal("Invalid number of workers") // считываем из stdin количество работников
+		fmt.Println("Invalid number of workers") // считываем из stdin количество работников
+		return
 	}
+
+	start(workers, stopSignal)
+}
+
+func start(workers int, stopSignal context.Context) {
+	var wg sync.WaitGroup
+
 	data := make(chan int)            // создаем канал, в который будем записывать данные
 	go generateData(stopSignal, data) // запускаем горутину, в которую передаем канал для записи данных и контекст, для завершения работы рутины
+
 	for i := 0; i < workers; i++ {
-		wg.Add(1)                        // добавление счетчика для каждой горутины
+		wg.Add(1) // добавление счетчика для каждой горутины
+
 		go worker(stopSignal, data, &wg) // запуск работников
 	}
+
 	defer close(data) // закрываем канал
 	wg.Wait()         // ожидание завершения работы всех горутин
 }
@@ -44,6 +56,7 @@ func worker(ctx context.Context, data <-chan int, wg *sync.WaitGroup) {
 				fmt.Println("Channel is closed")
 				return
 			}
+
 			fmt.Println(number)
 		}
 	}
@@ -64,9 +77,10 @@ func generateData(ctx context.Context, data chan<- int) {
 
 func gracefulShutdown(cancel context.CancelFunc) {
 	go func() {
-		signalChan := make(chan os.Signal)      // канал, принмающий сигнала системы
+		signalChan := make(chan os.Signal, 1)   // буфферизированный канал(чтобы не заблокировался), принмающий сигнала системы
 		signal.Notify(signalChan, os.Interrupt) // оповещает канал о сигнале, полученный от os.Interrupt(подписывает канал на получения сигнала)
 		defer signal.Stop(signalChan)
+
 		<-signalChan // ожидаю сигнала стоп от канала
 		cancel()     // отменяем созданный контекстм
 	}()

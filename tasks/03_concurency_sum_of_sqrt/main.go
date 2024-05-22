@@ -16,18 +16,22 @@ func main() {
 }
 
 func goroutineAndWaitGroup(numbers []int) {
-	var wg sync.WaitGroup // создание WaitGroup для ожидания завершения горутин
 	summary := 0
+
+	var wg sync.WaitGroup // создание WaitGroup для ожидания завершения горутин
 
 	for _, number := range numbers {
 		wg.Add(1) // добавление счетчика для каждой горутины
+
 		go func(number int) {
 			defer wg.Done() // уменьшение счетчика для каждой горутины
+
 			square := number * number
 			summary += square
 		}(number)
 		wg.Wait() // ожидание завершения работы всех горутин
 	}
+
 	fmt.Println(summary)
 }
 
@@ -37,13 +41,14 @@ func goroutineAndUnbufferedChannel(numbers []int) {
 
 	for _, number := range numbers {
 		go func(number int) {
-			square := number * number
-			result <- square // отправление результата в канал
+			result <- number * number // отправление результата в канал
 		}(number)
 	}
+
 	for range numbers {
 		summary += <-result // получение результата из канала и сложение полученных его значений
 	}
+
 	fmt.Println(summary)
 	close(result) // закрытие канала
 }
@@ -54,13 +59,14 @@ func goroutineAndBufferedChannel(numbers []int) {
 
 	for _, number := range numbers {
 		go func(number int) {
-			square := number * number
-			result <- square // отправление результата в канал
+			result <- number * number // отправление результата в канал
 		}(number)
 	}
+
 	for range numbers {
 		summary += <-result // получение результата из канала и сложение полученных его значений
 	}
+
 	fmt.Println(summary)
 	close(result) // закрытие канала
 }

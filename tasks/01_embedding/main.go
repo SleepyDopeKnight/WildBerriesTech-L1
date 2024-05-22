@@ -20,7 +20,8 @@ func (a *Action) nextYearAge() {
 }
 
 func main() {
-	a := Action{Human{Age: 24}}
+	age := 24
+	a := Action{Human{Age: age}}
 	a.printAge()    // вызов родительского метода структуры Human
 	a.nextYearAge() // вызов метода структуры Action
 }
