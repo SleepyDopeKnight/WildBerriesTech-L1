@@ -25,7 +25,7 @@ output:
 linters:
   enable:
     - unused
-    #    - revive
+    - revive
     - asciicheck
     - containedctx
     - decorder
@@ -41,40 +41,31 @@ linters:
     - goconst
     - gocritic
     - gocyclo
-    - gocognit
     - asciicheck
     - gofmt
     - goimports
     - gomodguard
     - misspell
     - unparam
-    - dogsled
     - nakedret
     - prealloc
-    - gocritic
     - whitespace
     - wsl
     - goprintffuncname
     - noctx
-    - exportloopref
     - sqlclosecheck
-    #    - gofumpt
-    - dupl
+    - gofumpt
     - goheader
     - exhaustive
     - mnd
     - nestif
     - predeclared
     - err113
-    - noctx
-    - exportloopref
-    - sqlclosecheck
-    - errorlint
     - tparallel
     - makezero
     - thelper
     - gochecknoglobals
-#    - ireturn
+    - ireturn
 
 linters-settings:
   staticcheck:
@@ -82,6 +73,9 @@ linters-settings:
   errcheck:
     check-type-assertions: true
     check-blank: true
+    exclude-functions:
+      - fmt.Printf
+      - log.Printf
   lll:
     line-length: 130
     tab-width: 1

@@ -14,11 +14,10 @@ func main() {
 	var workers int
 
 	stopSignal, cancel := context.WithCancel(context.Background()) // создает контекст, с помощью которого можно выйти из программы
+	defer cancel()                                                 // для отмены созданого контекста
 	gracefulShutdown(cancel)                                       // выход из программы на ctlc+c
 
-	defer cancel() // для отмены созданого контекста
 	fmt.Println("Count of workers:")
-
 	if _, err := fmt.Fscan(os.Stdin, &workers); err != nil || workers <= 0 {
 		fmt.Println("Invalid number of workers") // считываем из stdin количество работников
 		return
@@ -82,6 +81,6 @@ func gracefulShutdown(cancel context.CancelFunc) {
 		defer signal.Stop(signalChan)
 
 		<-signalChan // ожидаю сигнала стоп от канала
-		cancel()     // отменяем созданный контекстм
+		cancel()     // очищаем созданный контекст
 	}()
 }
