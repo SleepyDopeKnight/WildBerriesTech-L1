@@ -11,14 +11,15 @@ func main() {
 	fmt.Println("--------")
 	writeWithSyncMap(sliceNumbers)
 	fmt.Println("--------")
-
 }
 
 func writeWithMutex(sliceNumbers []int) {
 	var wg sync.WaitGroup
+
 	var mutex sync.Mutex
 
 	mapNumbers := make(map[int]int)
+
 	for index, number := range sliceNumbers {
 		wg.Add(1) // добавление счетчика для каждой горутины
 
@@ -31,11 +32,13 @@ func writeWithMutex(sliceNumbers []int) {
 		}()
 		wg.Wait() // ожидание завершения работы всех горутин
 	}
+
 	fmt.Println(mapNumbers)
 }
 
 func writeWithSyncMap(sliceNumbers []int) {
 	var wg sync.WaitGroup
+
 	var mapNumbers sync.Map // под капотом уже имеет mutex
 
 	for index, number := range sliceNumbers {

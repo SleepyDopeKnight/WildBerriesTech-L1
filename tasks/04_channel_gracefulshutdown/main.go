@@ -16,17 +16,17 @@ func main() {
 	stopSignal, cancel := context.WithCancel(context.Background()) // создает контекст, с помощью которого можно выйти из программы
 	defer cancel()                                                 // для отмены созданого контекста
 	gracefulShutdown(cancel)                                       // выход из программы на ctlc+c
-
 	fmt.Println("Count of workers:")
+
 	if _, err := fmt.Fscan(os.Stdin, &workers); err != nil || workers <= 0 {
 		fmt.Println("Invalid number of workers") // считываем из stdin количество работников
 		return
 	}
 
-	start(workers, stopSignal)
+	start(stopSignal, workers)
 }
 
-func start(workers int, stopSignal context.Context) {
+func start(stopSignal context.Context, workers int) {
 	var wg sync.WaitGroup
 
 	data := make(chan int)            // создаем канал, в который будем записывать данные

@@ -18,11 +18,14 @@ func start(stopSignal context.Context) {
 	var wg sync.WaitGroup
 
 	data := make(chan int) // создаем канал, в который будем записывать данные
+
 	wg.Add(2)
+
 	go generateData(stopSignal, data, &wg) // запускаем горутину, в которую передаем канал для записи данных и контекст, для завершения работы рутины
-	go worker(stopSignal, data, &wg)       // запуск работника
-	defer close(data)                      // закрываем канал
-	wg.Wait()                              // ожидание завершения работы всех горутин
+
+	go worker(stopSignal, data, &wg) // запуск работника
+	defer close(data)                // закрываем канал
+	wg.Wait()                        // ожидание завершения работы всех горутин
 }
 
 func worker(ctx context.Context, data <-chan int, wg *sync.WaitGroup) {
