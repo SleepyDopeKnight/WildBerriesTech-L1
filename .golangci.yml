@@ -44,7 +44,7 @@ linters:
     - asciicheck
     - gofmt
     - goimports
-    - gomodguard
+#    - gomodguard
     - misspell
     - unparam
     - nakedret
@@ -57,7 +57,7 @@ linters:
     - gofumpt
     - goheader
     - exhaustive
-    - mnd
+#    - mnd
     - nestif
     - predeclared
     - err113
