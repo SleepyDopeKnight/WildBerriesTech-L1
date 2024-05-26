@@ -28,7 +28,7 @@ func writeWithMutex(sliceNumbers []int) {
 
 			mutex.Lock() // блокировка других горутин для записи значений в мапу
 			mapNumbers[index] = number
-			mutex.Unlock() // разбловкировку рутин
+			mutex.Unlock() // разбловкировка рутин
 		}()
 		wg.Wait() // ожидание завершения работы всех горутин
 	}
