@@ -65,7 +65,7 @@ linters:
     - makezero
     - thelper
     - gochecknoglobals
-    - ireturn
+#    - ireturn
 
 linters-settings:
   staticcheck:
